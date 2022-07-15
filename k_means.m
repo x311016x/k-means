@@ -1,18 +1,19 @@
 clc;clear all;close all;
 %% param
 q=zeros(240,240);
-times=10;
 p1=[60,60];
 p2=[180,60];
 p3=[120,180];
 P={p1;p2;p3};
 mycolor=['r','g','b','y','c','m'];
-cc=cell(1,times);%(1,k)
 n=size(P(:,1),1);
+cc={n,1};
+
+
 for i=1:n
-cc{1}{i}=P{i};
+cc{i}=P{i};
 end
-C = cell(3,1);%C={c1;c2;c3}; 各個子集
+
 
 %% data point generation
 for i=1:size(q,1)
@@ -26,18 +27,32 @@ end
 %% initial graph
 figure
 hold on
+for i=1:n
+    temp=P{i};
+    plot(temp(1),temp(2),'o','Color',mycolor(i));
+end
 
-for k=1:times
+
+count=0;
+d_sum=10;
+while(1)
+    
         %% Set setting
     D=zeros(n,1);
+    C = cell(n,1);%C={c1;c2;c3}; 各個子集
     for i=1:size(x)
     for j=1:n
         temp=[x(i),y(i)];
-        D(j)=(distant(cc{k}{j},temp))^2;
+        D(j)=(distant(cc{j},temp));
     end
     idx=find(D==min(D));
     p=[x(i),y(i)];
     C{min(idx)}{end+1}=p;
+    end
+    if(d_sum<0.1)
+        break;
+    else
+        d_sum=0;
     end
         %% Caculate center
     for i=1:n
@@ -49,11 +64,14 @@ for k=1:times
           y_c=y_c+temp(2);
     end
     temp=[x_c/length(C{i}),y_c/length(C{i})];
-    cc{k+1}{i}=temp;
+    d_sum=d_sum+distant(temp,cc{i});
+    cc{i}=temp;
     end
-    cc{k+1}
-
+    d_sum
+    count=count+1
 end
+
+
 %% show graph
 axis([0 240 0 240])
 %畫各組點
@@ -65,19 +83,23 @@ for i=1:n
      end
 end
 %畫各組中心
-for time=1:size(cc,2)
-      for i=1:n
-           temp=cc{time}{i};
-           if (time==1)||(time==times)
-               marker='O';
-           else
-               marker='x';
-           end
-               plot(temp(1),temp(2),marker,'Color',mycolor(i));
-               hold on
-      end
-end
+ for i=1:n
+     temp=cc{i};
+     plot(temp(1),temp(2),'^','Color',mycolor(i));
+     hold on       
+ end
+
 %劃分界線
+px=1:n;
+py=1:n;
+for i=1:n
+   temp=cc{i};
+   px(i)=temp(1);
+   py(i)=temp(2);
+end
+voronoi(px,py);
+
+
 
 %% function 
 function d = distant(p1,p2)
@@ -86,12 +108,11 @@ function d = distant(p1,p2)
   d=sqrt(x^2+y^2);
 end
 
-function eq=boundary(p1,p2,p0) %y=ax+b eq(1)=a eq(2)=b
-x=p1(1)-p2(1);
-y=p1(2)-p2(2);
-m=x/y;
-%y-y0=m(x-x0)
-%y=mx+(y0-m*x0)
-eq(1)=a;
-eq(2)=b;
-end
+
+
+
+
+
+
+
+
