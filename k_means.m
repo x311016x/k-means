@@ -13,8 +13,6 @@ cc={n,1};
 for i=1:n
 cc{i}=P{i};
 end
-
-
 %% data point generation
 for i=1:size(q,1)
     for j=1:size(q,2)
