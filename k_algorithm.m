@@ -7,6 +7,7 @@ for i=1:n
 cc{i}=P{i};
 end
 d_sum=10;
+count=0;
 while(1)
         %% Set setting
     D=zeros(n,1);
@@ -18,25 +19,24 @@ while(1)
     end
     idx=find(D==min(D));
     p=[x(i),y(i)];
-    C{min(idx)}{end+1}=p;
+    C{min(idx)}=[C{min(idx)} ;p];
     end
-    if(d_sum<0.1)
+    if(d_sum<0.5)
         break;
     else
         d_sum=0;
     end
         %% Caculate center
     for i=1:n
-     x_c=0;
-     y_c=0;
-    for j=1:length(C{i})
-          temp=C{i}{j};
-          x_c=x_c+temp(1);
-          y_c=y_c+temp(2);
-    end
-    temp=[x_c/length(C{i}),y_c/length(C{i})];
-    d_sum=d_sum+distant(temp,cc{i});
-    cc{i}=temp;
+        if ((~isempty(C{i})))
+             x_c=sum(C{i}(:,1))/length(C{i});
+             y_c=sum(C{i}(:,2))/length(C{i});
+             temp=[x_c,y_c];
+             d_sum=d_sum+distant(temp,cc{i});
+             cc{i}=temp;          
+        end
     end  
+    count=count+1
+     d_sum
 end
 end
